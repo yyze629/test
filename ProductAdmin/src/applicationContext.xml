@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans"
+	     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	     xmlns:aop="http://www.springframework.org/schema/aop"
+	     xmlns:tx="http://www.springframework.org/schema/tx"
+	     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+
+    <bean id="testService" class="com.chao98.test.TestService"><!-- 这里体现测试spring包是否可用 -->
+			<property name="name">
+				<value>陈超</value>
+			</property> 
+	</bean>
+	<!-- 配置数据源,spring提倡用数据源开发,可以大大提高效率 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="password" value=""></property>
+		<property name="username" value="root"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/prodb"></property>
+		<property name="initialSize" value="3"></property>
+		<property name="maxActive" value="500"></property>
+		<property name="maxIdle" value="2"></property>
+		<property name="minIdle" value="1"></property>
+	</bean>
+	<!-- 配置会话工厂 -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<!-- 设置资源 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="mappingResources">
+			<list>
+				<value>com/chao98/domain/Product.hbm.xml</value>
+				<value>com/chao98/domain/Category.hbm.xml</value>
+				<value>com/chao98/domain/User.hbm.xml</value>
+		 	</list>
+		</property>
+	<property name="hibernateProperties">
+			<value>
+				hibernate.dialect=org.hibernate.dialect.MySQLDialect
+			 	hibernate.format=true
+			 	hibernate.hbm2ddl.auto=update
+			 	hibernate.show_sql=true
+				hibernate.cache.use_second_level_cache=true
+        	    hibernate.cache.provider_class=org.hibernate.cache.EhCacheProvider
+        	    hibernate.generate_statistics=true
+			</value>
+		</property>
+	</bean>
+	 <bean id="categoryService" class="com.chao98.service.imp.CategoryService">
+	  		<property name="sessionFactory" ref="sessionFactory"></property>
+	  </bean>
+	  <!-- 配置ProductService对象 -->
+	  <bean id="productService" class="com.chao98.service.imp.ProductService">
+	  		<property name="sessionFactory" ref="sessionFactory"></property>
+	  </bean> 
+	  <!-- 配置action -->
+	   <bean name="/login" scope="prototype" class="com.chao98.web.actions.LoginAction">
+	     <property name="productService" ref="productService"></property>
+	     <property name="categoryService" ref="categoryService"></property>
+	   </bean> 
+	    <bean name="/getAll" scope="singleton" class="com.chao98.web.actions.GetAllAction">
+	     <property name="productService" ref="productService"></property>
+	     <property name="categoryService" ref="categoryService"></property>
+	   </bean>
+	   <bean name="/SelectByName" scope="singleton" class="com.chao98.web.actions.SelectByNameAction">
+	     <property name="productService" ref="productService"></property>
+	     <property name="categoryService" ref="categoryService"></property>
+	   </bean>  
+   <!-- 
+	配置事物管理器 这里注意: 事物管理器>>>>sessionFactory >>>dataSource>>>数据库 
+	 -->
+	 <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 上面这步配好了还不能用, 还要启用事务-->
+	<tx:annotation-driven transaction-manager="transactionManager"/>  
+</beans>

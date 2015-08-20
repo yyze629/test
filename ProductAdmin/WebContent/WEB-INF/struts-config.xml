@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts-config PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 1.2//EN" 
+"http://struts.apache.org/dtds/struts-config_1_2.dtd">
+<struts-config>
+	  <form-beans>
+ <!--  <form-bean name="productForm" type="com.chao98.web.forms.ProductForm"></form-bean>-->
+			<form-bean name="userForm" type="com.chao98.web.forms.UserForm"/> 	
+			<form-bean name="selectByNameForm" type="com.chao98.web.forms.SelectByNameForm"></form-bean>  
+      </form-beans>
+	 <global-forwards>
+		      <forward name="operOk" path="/operSuccess.jsp"></forward>
+		  	  <forward name="operErr" path="/operError.jsp"></forward>
+	          <forward name="logout" path="/login.jsp"></forward>
+	  </global-forwards>
+	 <!-- type="com.chao98.web.action.LoginAction" -->
+	<action-mappings>
+	<action path="/SelectByName" 
+	    scope="request"
+	    name="selectByNameForm"
+	    validate="true"
+	 >
+	   <forward name="success" path="/ProductList.jsp"/>
+	 </action>
+		<action path="/login" 
+		name="userForm" 
+		parameter="flag"
+		scope="request" 
+		validate="true" 
+		>
+		 <forward name="ok" path="/listPro.jsp"></forward> 
+		 <forward name="err" path="/login.jsp"></forward> 
+			 <forward name="goAddProUi" path="/addProduct.jsp"></forward>
+			 <forward name="goListPro" path="/listPro.jsp"></forward> 
+			 <forward name="goUpdProUi" path="/updPro.jsp"></forward>
+	 </action> 
+	 <action path="/getAll"
+	 	scope="session"
+	 >
+	 <forward name="getAll" path="/index.jsp"></forward> 
+	 </action>
+	</action-mappings>
+	<!-- 这里配置代理请求处理-->
+	<controller>
+		<set-property property="processorClass" value="org.springframework.web.struts.DelegatingRequestProcessor"/>
+	</controller>
+	 <message-resources parameter="productAdmin.struts.ApplicationResources"></message-resources>
+</struts-config>
+

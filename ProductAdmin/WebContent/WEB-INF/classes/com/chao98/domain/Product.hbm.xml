@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.chao98.domain">
+	<class name="Product" table="t_product">
+		  <id name="productid" type="java.lang.Integer" column="productid">
+			<generator class="native"/> 
+		  </id>   
+		 <property name="productname" type="java.lang.String" column="productname"></property>
+		  <property name="price" type="java.lang.Float" column="price"></property>
+	      <property name="remark" type="java.lang.String" column="remark"></property>
+		  <property name="registerdate" type="java.util.Date" column="registerdate"></property>
+      <many-to-one name="category" column="categoryid"></many-to-one> 
+	</class> 
+</hibernate-mapping>
